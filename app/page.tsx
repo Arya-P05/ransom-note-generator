@@ -1,25 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useState, ReactNode } from "react";
 import html2canvas from "html2canvas";
 
 export default function Home() {
   const [text, setText] = useState("");
-  const [generated, setGenerated] = useState<JSX.Element[][]>([]);
+  const [generated, setGenerated] = useState<ReactNode[][]>([]);
 
   const handleGenerate = () => {
     const words = text.toUpperCase().split(" ");
 
     const wordComponents = words.map((word, wordIndex) => {
+      let prevVariationByChar: { [char: string]: number } = {};
+
       const letters = word.split("").map((char, i) => {
         const isValidChar = /^[A-Z0-9]$/.test(char);
         if (!isValidChar) return null;
 
-        const variation = String(Math.floor(Math.random() * 5) + 1).padStart(
-          2,
-          "0"
-        );
-        const src = `/${char}/${char}_${variation}.png`;
+        // Determine variation, avoiding repeat of previous variation for same char
+        let variation: number;
+        const maxVariations = 5;
+        const prevChar = i > 0 ? word[i - 1] : null;
+        const prevVariation =
+          prevChar === char ? prevVariationByChar[char] : null;
+
+        do {
+          variation = Math.floor(Math.random() * maxVariations) + 1;
+        } while (variation === prevVariation);
+
+        prevVariationByChar[char] = variation;
+
+        const paddedVar = String(variation).padStart(2, "0");
+        const src = `/${char}/${char}_${paddedVar}.png`;
 
         const rotation = (Math.random() * 10 - 5).toFixed(2); // -5 to +5 deg
         const verticalOffset = Math.floor(Math.random() * 6) - 3; // -3 to +2 px
@@ -32,7 +44,7 @@ export default function Home() {
             className="h-20 w-auto"
             style={{
               transform: `rotate(${rotation}deg) translateY(${verticalOffset}px)`,
-              marginLeft: i === 0 ? 0 : -8, // overlap more if not first letter
+              marginLeft: i === 0 ? 0 : -8, // overlap if not first
             }}
           />
         );
