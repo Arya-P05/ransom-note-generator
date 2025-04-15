@@ -17,7 +17,6 @@ export default function Home() {
         const isValidChar = /^[A-Z0-9]$/.test(char);
         if (!isValidChar) return null;
 
-        // Determine variation, avoiding repeat of previous variation for same char
         let variation: number;
         const maxVariations = 5;
         const prevChar = i > 0 ? word[i - 1] : null;
@@ -33,8 +32,8 @@ export default function Home() {
         const paddedVar = String(variation).padStart(2, "0");
         const src = `/${char}/${char}_${paddedVar}.png`;
 
-        const rotation = (Math.random() * 10 - 5).toFixed(2); // -5 to +5 deg
-        const verticalOffset = Math.floor(Math.random() * 6) - 3; // -3 to +2 px
+        const rotation = (Math.random() * 10 - 5).toFixed(2);
+        const verticalOffset = Math.floor(Math.random() * 6) - 3;
 
         return (
           <img
@@ -44,7 +43,7 @@ export default function Home() {
             className="h-20 w-auto"
             style={{
               transform: `rotate(${rotation}deg) translateY(${verticalOffset}px)`,
-              marginLeft: i === 0 ? 0 : -8, // overlap if not first
+              marginLeft: i === 0 ? 0 : -8,
             }}
           />
         );
@@ -60,16 +59,14 @@ export default function Home() {
     const element = document.getElementById("ransom-output");
     if (!element) return;
 
-    // Temporarily remove background
     const originalBg = element.style.backgroundColor;
     element.style.backgroundColor = "transparent";
 
     const canvas = await html2canvas(element, {
       backgroundColor: null,
-      scale: 3, // increase resolution
+      scale: 3,
     });
 
-    // Restore original background
     element.style.backgroundColor = originalBg;
 
     const link = document.createElement("a");
@@ -79,7 +76,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-8 bg-gray-100">
+    <main className="flex flex-col items-center justify-center min-h-screen p-8 bg-black text-white">
       <h1 className="text-3xl font-bold mb-6">Ransom Note Generator</h1>
 
       <input
@@ -87,19 +84,19 @@ export default function Home() {
         placeholder="Type your message..."
         value={text}
         onChange={(e) => setText(e.target.value)}
-        className="p-3 border rounded w-full max-w-md text-xl"
+        className="p-3 border border-gray-600 rounded w-full max-w-md text-xl bg-zinc-900 text-white placeholder-gray-400"
       />
 
       <div className="mt-4 flex gap-4 flex-wrap">
         <button
           onClick={handleGenerate}
-          className="bg-black text-white px-4 py-2 rounded hover:opacity-80"
+          className="bg-white text-black px-4 py-2 rounded hover:opacity-80"
         >
           Generate
         </button>
         <button
           onClick={handleDownload}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:opacity-80"
+          className="bg-green-500 text-black px-4 py-2 rounded hover:opacity-80"
         >
           Download PNG
         </button>
@@ -107,10 +104,10 @@ export default function Home() {
 
       <div
         id="ransom-output"
-        className="flex flex-col p-0 m-0"
+        className="flex flex-col p-0 m-0 mt-10"
         style={{
-          display: "inline-block", // shrink to fit content
-          backgroundColor: "transparent", // ensure it's transparent
+          display: "inline-block",
+          backgroundColor: "transparent",
         }}
       >
         {generated.map((word, wi) => (
