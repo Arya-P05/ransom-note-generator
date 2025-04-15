@@ -60,7 +60,18 @@ export default function Home() {
     const element = document.getElementById("ransom-output");
     if (!element) return;
 
-    const canvas = await html2canvas(element, { backgroundColor: null });
+    // Temporarily remove background
+    const originalBg = element.style.backgroundColor;
+    element.style.backgroundColor = "transparent";
+
+    const canvas = await html2canvas(element, {
+      backgroundColor: null,
+      scale: 3, // increase resolution
+    });
+
+    // Restore original background
+    element.style.backgroundColor = originalBg;
+
     const link = document.createElement("a");
     link.download = "ransom-note.png";
     link.href = canvas.toDataURL("image/png");
@@ -96,7 +107,11 @@ export default function Home() {
 
       <div
         id="ransom-output"
-        className="flex flex-col flex-wrap mt-10 p-4 bg-white rounded shadow max-w-4xl"
+        className="flex flex-col p-0 m-0"
+        style={{
+          display: "inline-block", // shrink to fit content
+          backgroundColor: "transparent", // ensure it's transparent
+        }}
       >
         {generated.map((word, wi) => (
           <div key={wi} className="flex flex-row flex-nowrap mb-2">
