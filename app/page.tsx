@@ -102,21 +102,24 @@ export default function Home() {
         </button>
       </div>
 
-      <div
-        id="ransom-output"
-        className="flex flex-col items-center justify-center mt-10"
-        style={{
-          backgroundColor: "transparent",
-        }}
-      >
-        {generated.map((word, wi) => (
-          <div
-            key={wi}
-            className="flex flex-row flex-nowrap mb-2 justify-center p-1"
-          >
-            {word}
-          </div>
-        ))}
+      {/* Website-only container box for style */}
+      <div className="mt-10 p-6 rounded-xl bg-zinc-800/50 border border-white/10 shadow-lg">
+        <div
+          id="ransom-output"
+          className="flex flex-col items-center justify-center"
+          style={{
+            backgroundColor: "transparent",
+          }}
+        >
+          {generated.map((word, wi) => (
+            <div
+              key={wi}
+              className="flex flex-row flex-nowrap mb-2 justify-center p-1"
+            >
+              {word}
+            </div>
+          ))}
+        </div>
       </div>
     </main>
   );
