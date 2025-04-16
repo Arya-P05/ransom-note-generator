@@ -7,6 +7,45 @@ export default function Home() {
   const [text, setText] = useState("");
   const [generated, setGenerated] = useState<ReactNode[][]>([]);
 
+  const VARIATION_COUNTS: { [key: string]: number } = {
+    "0": 18,
+    "1": 18,
+    "2": 14,
+    "3": 21,
+    "4": 31,
+    "5": 15,
+    "6": 17,
+    "7": 18,
+    "8": 16,
+    "9": 13,
+    A: 57,
+    B: 28,
+    C: 30,
+    D: 27,
+    E: 33,
+    F: 27,
+    G: 32,
+    H: 24,
+    I: 25,
+    J: 23,
+    K: 23,
+    L: 24,
+    M: 30,
+    N: 34,
+    O: 28,
+    P: 23,
+    Q: 21,
+    R: 35,
+    S: 52,
+    T: 27,
+    U: 24,
+    V: 22,
+    W: 24,
+    X: 20,
+    Y: 26,
+    Z: 23,
+  };
+
   const handleGenerate = () => {
     const words = text.toUpperCase().split(" ");
 
