@@ -149,12 +149,21 @@ export default function Home() {
           className="flex flex-col items-center justify-center"
           style={{
             backgroundColor: "transparent",
+            display: "inline-block",
+            padding: 0,
+            margin: 0,
+            width: "fit-content", // 🔥 key fix
+            maxWidth: "100vw", // safety for overflow
+            whiteSpace: "nowrap", // prevents unintended line breaks
           }}
         >
           {generated.map((word, wi) => (
             <div
               key={wi}
-              className="flex flex-row flex-nowrap mb-2 justify-center p-1"
+              className="flex flex-row flex-nowrap justify-center p-1"
+              style={{
+                width: "fit-content",
+              }}
             >
               {word}
             </div>
