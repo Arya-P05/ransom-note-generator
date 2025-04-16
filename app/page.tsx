@@ -56,15 +56,16 @@ export default function Home() {
         const isValidChar = /^[A-Z0-9]$/.test(char);
         if (!isValidChar) return null;
 
+        const maxVariations = VARIATION_COUNTS[char] ?? 1;
         let variation: number;
-        const maxVariations = 5;
+
         const prevChar = i > 0 ? word[i - 1] : null;
         const prevVariation =
           prevChar === char ? prevVariationByChar[char] : null;
 
         do {
           variation = Math.floor(Math.random() * maxVariations) + 1;
-        } while (variation === prevVariation);
+        } while (variation === prevVariation && maxVariations > 1);
 
         prevVariationByChar[char] = variation;
 
