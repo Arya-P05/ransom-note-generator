@@ -76,7 +76,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-8 bg-black text-white">
+    <main className="relative z-20 flex flex-col items-center justify-center min-h-screen p-8 text-white">
       <h1 className="text-3xl font-bold mb-6">Ransom Note Generator</h1>
 
       <input
@@ -104,14 +104,16 @@ export default function Home() {
 
       <div
         id="ransom-output"
-        className="flex flex-col p-0 m-0 mt-10"
+        className="flex flex-col items-center justify-center mt-10"
         style={{
-          display: "inline-block",
           backgroundColor: "transparent",
         }}
       >
         {generated.map((word, wi) => (
-          <div key={wi} className="flex flex-row flex-nowrap mb-2">
+          <div
+            key={wi}
+            className="flex flex-row flex-nowrap mb-2 justify-center p-1"
+          >
             {word}
           </div>
         ))}
