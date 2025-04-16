@@ -142,32 +142,33 @@ export default function Home() {
         </button>
       </div>
 
-      {/* Website-only container box for style */}
-      <div className="mt-10 p-6 rounded-xl bg-zinc-800/50 border border-white/10 shadow-lg">
-        <div
-          id="ransom-output"
-          className="flex flex-col items-center justify-center"
-          style={{
-            backgroundColor: "transparent",
-            display: "inline-block",
-            padding: 0,
-            margin: 0,
-            width: "fit-content", // 🔥 key fix
-            maxWidth: "100vw", // safety for overflow
-            whiteSpace: "nowrap", // prevents unintended line breaks
-          }}
-        >
-          {generated.map((word, wi) => (
-            <div
-              key={wi}
-              className="flex flex-row flex-nowrap justify-center p-1"
-              style={{
-                width: "fit-content",
-              }}
-            >
-              {word}
-            </div>
-          ))}
+      {/* Visual box */}
+      <div className="mt-10 flex justify-center">
+        <div className="p-6 rounded-xl bg-zinc-800/50 border border-white/10 shadow-lg">
+          {/* This is the only element downloaded */}
+          <div
+            id="ransom-output"
+            className="flex flex-col items-center justify-center gap-1"
+            style={{
+              display: "inline-block",
+              backgroundColor: "transparent",
+              padding: 0,
+              margin: 0,
+              width: "fit-content",
+            }}
+          >
+            {generated.map((word, wi) => (
+              <div
+                key={wi}
+                className="flex flex-row justify-center gap-[-2px] p-1.5"
+                style={{
+                  width: "100%",
+                }}
+              >
+                {word}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </main>
