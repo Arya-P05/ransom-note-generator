@@ -144,25 +144,36 @@ export default function Home() {
 
       {/* Visual box */}
       <div className="mt-10 flex justify-center">
-        <div className="p-6 rounded-xl bg-zinc-800/50 border border-white/10 shadow-lg">
-          {/* This is the only element downloaded */}
+        <div
+          className="relative bg-zinc-800/50 border border-white/10 shadow-lg p-6 rounded-xl flex flex-wrap justify-center items-start"
+          style={{
+            minWidth: "300px",
+            minHeight: "100px",
+            maxWidth: "90vw", // grow only up to screen width
+            maxHeight: "80vh",
+            overflowWrap: "break-word",
+            wordBreak: "break-word",
+          }}
+        >
+          {/* Tightly-cropped export-only element */}
           <div
             id="ransom-output"
-            className="flex flex-col items-center justify-center gap-1"
+            className="flex flex-wrap justify-center gap-2"
             style={{
-              display: "inline-block",
               backgroundColor: "transparent",
-              padding: 0,
-              margin: 0,
-              width: "fit-content",
+              display: "inline-flex",
+              maxWidth: "100%",
             }}
           >
             {generated.map((word, wi) => (
               <div
                 key={wi}
-                className="flex flex-row justify-center gap-[-2px] p-1.5"
+                className="flex flex-wrap justify-center break-words p-2"
                 style={{
-                  width: "100%",
+                  wordBreak: "break-word",
+                  overflowWrap: "break-word",
+                  maxWidth: "100%",
+                  paddingTop: 2,
                 }}
               >
                 {word}
