@@ -149,7 +149,7 @@ export default function Home() {
           style={{
             minWidth: "300px",
             minHeight: "100px",
-            maxWidth: "90vw", // grow only up to screen width
+            maxWidth: "90vw",
             maxHeight: "80vh",
             overflowWrap: "break-word",
             wordBreak: "break-word",
