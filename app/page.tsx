@@ -6,6 +6,7 @@ import html2canvas from "html2canvas";
 export default function Home() {
   const [text, setText] = useState("");
   const [generated, setGenerated] = useState<ReactNode[][]>([]);
+  const [letters, setLetters] = useState<string[]>([]);
 
   const VARIATION_COUNTS: { [key: string]: number } = {
     "0": 18,
