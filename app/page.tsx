@@ -52,6 +52,35 @@ export default function Home() {
     Z: 23,
   };
 
+  const handleChange = (newText: string) => {
+    const filteredText: string = newText.replace(/[^A-Za-z0-9 ]/g, "");
+
+    const newLetters: Letter[] = [];
+
+    for (let idx = 0; idx < filteredText.length; idx++) {
+      const currLetter: string = filteredText[idx].toUpperCase();
+
+      if (idx < letters.length && letters[idx].char === currLetter) {
+        newLetters.push(letters[idx]);
+      } else {
+        if (!/^[A-Z0-9 ]$/.test(currLetter)) {
+          continue;
+        } else if (currLetter === " ") {
+          newLetters.push({ char: " ", imageIdx: 0 });
+        } else {
+          const maxVariations: number = VARIATION_COUNTS[currLetter];
+          let currVariation: number =
+            Math.floor(Math.random() * maxVariations) + 1;
+
+          newLetters.push({ char: currLetter, imageIdx: currVariation });
+        }
+      }
+    }
+
+    setText(filteredText);
+    setLetters(newLetters);
+  };
+
   const handleGenerate = () => {
     const words = text.toUpperCase().split(" ");
 
@@ -129,7 +158,7 @@ export default function Home() {
         type="text"
         placeholder="Type your message..."
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={(e) => handleChange(e.target.value)}
         className="p-3 border border-gray-600 rounded w-full max-w-md text-xl bg-zinc-900 text-white placeholder-gray-400"
       />
 
