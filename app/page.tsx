@@ -3,10 +3,15 @@
 import { useState, ReactNode } from "react";
 import html2canvas from "html2canvas";
 
+type Letter = {
+  char: string;
+  imageIdx: number;
+};
+
 export default function Home() {
   const [text, setText] = useState("");
   const [generated, setGenerated] = useState<ReactNode[][]>([]);
-  const [letters, setLetters] = useState<string[]>([]);
+  const [letters, setLetters] = useState<Letter[]>([]);
 
   const VARIATION_COUNTS: { [key: string]: number } = {
     "0": 18,
