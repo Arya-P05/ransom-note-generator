@@ -10,7 +10,6 @@ type Letter = {
 
 export default function Home() {
   const [text, setText] = useState("");
-  const [generated, setGenerated] = useState<ReactNode[][]>([]);
   const [letters, setLetters] = useState<Letter[]>([]);
 
   const VARIATION_COUNTS: { [key: string]: number } = {
@@ -81,53 +80,25 @@ export default function Home() {
     setLetters(newLetters);
   };
 
-  const handleGenerate = () => {
-    const words = text.toUpperCase().split(" ");
+  const handleRemix = () => {
+    const newLetters: Letter[] = [];
 
-    const wordComponents = words.map((word, wordIndex) => {
-      let prevVariationByChar: { [char: string]: number } = {};
+    for (let idx = 0; idx < text.length; idx++) {
+      const currLetter: string = text[idx].toUpperCase();
 
-      const letters = word.split("").map((char, i) => {
-        const isValidChar = /^[A-Z0-9]$/.test(char);
-        if (!isValidChar) return null;
+      if (!/^[A-Z0-9 ]$/.test(currLetter)) {
+        continue;
+      } else if (currLetter === " ") {
+        newLetters.push({ char: " ", imageIdx: 0 });
+      } else {
+        const max = VARIATION_COUNTS[currLetter] ?? 1;
+        const variation = Math.floor(Math.random() * max) + 1;
 
-        const maxVariations = VARIATION_COUNTS[char] ?? 1;
-        let variation: number;
+        newLetters.push({ char: currLetter, imageIdx: variation });
+      }
+    }
 
-        const prevChar = i > 0 ? word[i - 1] : null;
-        const prevVariation =
-          prevChar === char ? prevVariationByChar[char] : null;
-
-        do {
-          variation = Math.floor(Math.random() * maxVariations) + 1;
-        } while (variation === prevVariation && maxVariations > 1);
-
-        prevVariationByChar[char] = variation;
-
-        const paddedVar = String(variation).padStart(2, "0");
-        const src = `/${char}/${char}_${paddedVar}.png`;
-
-        const rotation = (Math.random() * 10 - 5).toFixed(2);
-        const verticalOffset = Math.floor(Math.random() * 6) - 3;
-
-        return (
-          <img
-            key={`${wordIndex}-${i}`}
-            src={src}
-            alt={char}
-            className="h-20 w-auto"
-            style={{
-              transform: `rotate(${rotation}deg) translateY(${verticalOffset}px)`,
-              marginLeft: i === 0 ? 0 : -8,
-            }}
-          />
-        );
-      });
-
-      return letters.filter(Boolean);
-    });
-
-    setGenerated(wordComponents);
+    setLetters(newLetters);
   };
 
   const handleDownload = async () => {
@@ -164,10 +135,13 @@ export default function Home() {
 
       <div className="mt-4 flex gap-4 flex-wrap">
         <button
-          onClick={handleGenerate}
+          onClick={handleRemix}
           className="bg-white text-black px-4 py-2 rounded hover:opacity-80"
         >
-          Generate
+          <span role="img" aria-label="dice">
+            🎲
+          </span>{" "}
+          Remix Letters
         </button>
         <button
           onClick={handleDownload}
