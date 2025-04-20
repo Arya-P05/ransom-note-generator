@@ -45,7 +45,7 @@ export default function Home() {
     Q: 21,
     R: 35,
     S: 52,
-    T: 27,
+    T: 26,
     U: 24,
     V: 22,
     W: 24,
@@ -55,26 +55,34 @@ export default function Home() {
   };
 
   const handleChange = (newText: string) => {
-    const filteredText: string = newText.replace(/[^A-Za-z0-9 ]/g, "");
-
+    const filteredText = newText.replace(/[^A-Za-z0-9 ]/g, "");
     const newLetters: Letter[] = [];
 
     for (let idx = 0; idx < filteredText.length; idx++) {
-      const currLetter: string = filteredText[idx].toUpperCase();
+      const currLetter = filteredText[idx].toUpperCase();
 
       if (idx < letters.length && letters[idx].char === currLetter) {
         newLetters.push(letters[idx]);
       } else {
-        if (!/^[A-Z0-9 ]$/.test(currLetter)) {
-          continue;
-        } else if (currLetter === " ") {
-          newLetters.push({ char: " ", imageIdx: 0 });
-        } else {
-          const maxVariations: number = VARIATION_COUNTS[currLetter];
-          let currVariation: number =
-            Math.floor(Math.random() * maxVariations) + 1;
+        if (!/^[A-Z0-9 ]$/.test(currLetter)) continue;
 
-          newLetters.push({ char: currLetter, imageIdx: currVariation });
+        if (currLetter === " ") {
+          newLetters.push({
+            char: " ",
+            imageIdx: 0,
+            rotation: 0,
+            offsetY: 0,
+            overlap: 0,
+          });
+        } else {
+          const max = VARIATION_COUNTS[currLetter];
+          newLetters.push({
+            char: currLetter,
+            imageIdx: Math.floor(Math.random() * max) + 1,
+            rotation: Math.random() * 16 - 8,
+            offsetY: Math.floor(Math.random() * 4) - 2,
+            overlap: Math.floor(Math.random() * 8) + 4,
+          });
         }
       }
     }
@@ -86,18 +94,28 @@ export default function Home() {
   const handleRemix = () => {
     const newLetters: Letter[] = [];
 
-    for (let idx = 0; idx < text.length; idx++) {
-      const currLetter: string = text[idx].toUpperCase();
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i].toUpperCase();
 
-      if (!/^[A-Z0-9 ]$/.test(currLetter)) {
-        continue;
-      } else if (currLetter === " ") {
-        newLetters.push({ char: " ", imageIdx: 0 });
+      if (!/^[A-Z0-9 ]$/.test(char)) continue;
+
+      if (char === " ") {
+        newLetters.push({
+          char: " ",
+          imageIdx: 0,
+          rotation: 0,
+          offsetY: 0,
+          overlap: 0,
+        });
       } else {
-        const max = VARIATION_COUNTS[currLetter] ?? 1;
-        const variation = Math.floor(Math.random() * max) + 1;
-
-        newLetters.push({ char: currLetter, imageIdx: variation });
+        const max = VARIATION_COUNTS[char];
+        newLetters.push({
+          char,
+          imageIdx: Math.floor(Math.random() * max) + 1,
+          rotation: Math.random() * 16 - 8,
+          offsetY: Math.floor(Math.random() * 4) - 2,
+          overlap: Math.floor(Math.random() * 8) + 4,
+        });
       }
     }
 
@@ -141,10 +159,7 @@ export default function Home() {
           onClick={handleRemix}
           className="bg-white text-black px-4 py-2 rounded hover:opacity-80"
         >
-          <span role="img" aria-label="dice">
-            🎲
-          </span>{" "}
-          Remix Design
+          🎲 Remix Design
         </button>
         <button
           onClick={handleDownload}
@@ -154,10 +169,9 @@ export default function Home() {
         </button>
       </div>
 
-      {/* Visual box */}
       <div className="mt-10 flex justify-center">
         <div
-          className="relative bg-zinc-800/50 border border-white/10 shadow-lg p-6 rounded-xl flex flex-wrap justify-center items-start"
+          className="relative bg-zinc-800/50 border border-white/10 shadow-lg p-6 rounded-xl flex justify-center items-start"
           style={{
             minWidth: "300px",
             minHeight: "100px",
@@ -167,79 +181,68 @@ export default function Home() {
             wordBreak: "break-word",
           }}
         >
-          {/* Tightly-cropped export-only element */}
           <div
             id="ransom-output"
-            className="flex flex-wrap justify-center gap-2"
+            className="flex flex-wrap justify-start items-start gap-y-6 gap-x-4"
             style={{
               backgroundColor: "transparent",
-              display: "inline-flex",
               maxWidth: "100%",
+              alignItems: "flex-start",
             }}
           >
             {(() => {
               const wordElements = [];
               let currentWord: ReactNode[] = [];
 
-              letters.forEach(({ char, imageIdx }, index) => {
-                if (char === " ") {
-                  // Push current word before the space
-                  if (currentWord.length > 0) {
-                    wordElements.push(
-                      <div
-                        key={`word-${index}`}
-                        className="flex flex-wrap items-center justify-start"
+              letters.forEach(
+                ({ char, imageIdx, rotation, offsetY, overlap }, index) => {
+                  if (char === " ") {
+                    if (currentWord.length > 0) {
+                      wordElements.push(
+                        <div
+                          key={`word-${index}`}
+                          className="flex flex-nowrap items-start justify-start"
+                          style={{
+                            margin: "0 12px 12px 0",
+                            maxWidth: "100%",
+                          }}
+                        >
+                          {currentWord}
+                        </div>
+                      );
+                      currentWord = [];
+                    }
+                  } else {
+                    const paddedVar = String(imageIdx).padStart(2, "0");
+                    const src = `/${char}/${char}_${paddedVar}.png`;
+
+                    currentWord.push(
+                      <img
+                        key={`letter-${index}`}
+                        src={src}
+                        alt={char}
+                        className="h-20 w-auto fade-in"
                         style={{
-                          maxWidth: "100%",
-                          flexShrink: 1,
-                          margin: "0 6px 6px 0", // adds bottom spacing too
-                          flexBasis: "auto",
-                          wordBreak: "break-word",
-                          overflowWrap: "break-word",
+                          transform: `rotate(${rotation}deg)`,
+                          marginTop: `${offsetY}px`,
+                          marginLeft:
+                            currentWord.length === 0 ? 0 : `-${overlap}px`,
+                          verticalAlign: "top",
                         }}
-                      >
-                        {currentWord}
-                      </div>
+                      />
                     );
-                    currentWord = [];
                   }
-                } else {
-                  const paddedVar = String(imageIdx).padStart(2, "0");
-                  const src = `/${char}/${char}_${paddedVar}.png`;
-
-                  const rotation = (Math.random() * 16 - 8).toFixed(2); // -8 to +8 degrees
-                  const verticalOffset = Math.floor(Math.random() * 6) - 3; // -3 to +2 px
-                  const overlap = Math.floor(Math.random() * 8) + 4; // -4 to -11px margin
-
-                  currentWord.push(
-                    <img
-                      key={`letter-${index}`}
-                      src={src}
-                      alt={char}
-                      className="h-20 w-auto fade-in"
-                      style={{
-                        transform: `rotate(${rotation}deg) translateY(${verticalOffset}px)`,
-                        marginLeft:
-                          currentWord.length === 0 ? 0 : `-${overlap}px`,
-                      }}
-                    />
-                  );
                 }
-              });
+              );
 
-              // Push the final word (if not followed by space)
               if (currentWord.length > 0) {
                 wordElements.push(
                   <div
                     key={`word-final`}
-                    className="flex flex-wrap items-center justify-start"
+                    className="flex flex-nowrap items-start justify-start"
                     style={{
+                      margin: "0 12px 12px 0",
                       maxWidth: "100%",
-                      flexShrink: 1,
-                      margin: "0 6px 6px 0",
-                      flexBasis: "auto",
-                      wordBreak: "break-word",
-                      overflowWrap: "break-word",
                     }}
                   >
                     {currentWord}
