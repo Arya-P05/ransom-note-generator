@@ -141,7 +141,7 @@ export default function Home() {
           <span role="img" aria-label="dice">
             🎲
           </span>{" "}
-          Remix Letters
+          Remix Design
         </button>
         <button
           onClick={handleDownload}
@@ -174,20 +174,64 @@ export default function Home() {
               maxWidth: "100%",
             }}
           >
-            {generated.map((word, wi) => (
-              <div
-                key={wi}
-                className="flex flex-wrap justify-center break-words p-2"
-                style={{
-                  wordBreak: "break-word",
-                  overflowWrap: "break-word",
-                  maxWidth: "100%",
-                  paddingTop: 2,
-                }}
-              >
-                {word}
-              </div>
-            ))}
+            {(() => {
+              const wordElements = [];
+              let currentWord: ReactNode[] = [];
+
+              letters.forEach(({ char, imageIdx }, index) => {
+                if (char === " ") {
+                  // Push current word before the space
+                  if (currentWord.length > 0) {
+                    wordElements.push(
+                      <div
+                        key={`word-${index}`}
+                        className="flex flex-nowrap items-center justify-center px-2"
+                        style={{ margin: "0 6px" }}
+                      >
+                        {currentWord}
+                      </div>
+                    );
+                    currentWord = [];
+                  }
+                } else {
+                  const paddedVar = String(imageIdx).padStart(2, "0");
+                  const src = `/${char}/${char}_${paddedVar}.png`;
+
+                  const rotation = (Math.random() * 16 - 8).toFixed(2); // -8 to +8 degrees
+                  const verticalOffset = Math.floor(Math.random() * 6) - 3; // -3 to +2 px
+                  const overlap = Math.floor(Math.random() * 8) + 4; // -4 to -11px margin
+
+                  currentWord.push(
+                    <img
+                      key={`letter-${index}`}
+                      src={src}
+                      alt={char}
+                      className="h-20 w-auto fade-in"
+                      style={{
+                        transform: `rotate(${rotation}deg) translateY(${verticalOffset}px)`,
+                        marginLeft:
+                          currentWord.length === 0 ? 0 : `-${overlap}px`,
+                      }}
+                    />
+                  );
+                }
+              });
+
+              // Push the final word (if not followed by space)
+              if (currentWord.length > 0) {
+                wordElements.push(
+                  <div
+                    key={`word-final`}
+                    className="flex flex-nowrap items-center justify-center px-2"
+                    style={{ margin: "0 6px" }}
+                  >
+                    {currentWord}
+                  </div>
+                );
+              }
+
+              return wordElements;
+            })()}
           </div>
         </div>
       </div>
