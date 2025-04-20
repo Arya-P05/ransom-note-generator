@@ -2,7 +2,7 @@
 
 import { useState, ReactNode } from "react";
 import html2canvas from "html2canvas";
-import { Download } from "lucide-react";
+import { Download, Dices } from "lucide-react";
 
 type Letter = {
   char: string;
@@ -193,7 +193,8 @@ export default function Home() {
             onClick={handleRemix}
             className="inline-flex items-center space-x-2 px-5 py-2 rounded-lg bg-gradient-to-r from-green-400 to-teal-400 text-black font-semibold shadow-md hover:scale-105 transition"
           >
-            <span>🎲 Remix</span>
+            <Dices className="w-5 h-5" />
+            <span>Remix</span>
           </button>
           <button
             onClick={handleDownload}
