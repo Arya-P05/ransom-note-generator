@@ -231,14 +231,14 @@ export default function Home() {
         <div
           className="relative bg-zinc-800/50 border border-white/10 shadow-lg p-6 rounded-xl flex justify-center items-center"
           style={{
-            width: "1000px",
-            height: "500px",
+            width: "1200px",
+            height: "600px",
             maxWidth: "90vw",
             maxHeight: "80vh",
-            overflow: "hidden",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            overflow: "auto",
           }}
         >
           <div
