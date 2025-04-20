@@ -123,23 +123,81 @@ export default function Home() {
   };
 
   const handleDownload = async () => {
-    const element = document.getElementById("ransom-output");
+    const element = document.getElementById("ransom-download");
     if (!element) return;
-
-    const originalBg = element.style.backgroundColor;
-    element.style.backgroundColor = "transparent";
 
     const canvas = await html2canvas(element, {
       backgroundColor: null,
       scale: 3,
     });
 
-    element.style.backgroundColor = originalBg;
-
     const link = document.createElement("a");
     link.download = "ransom-note.png";
     link.href = canvas.toDataURL("image/png");
     link.click();
+  };
+
+  const renderLetters = (tight: boolean) => {
+    const wordElements = [];
+    let currentWord: ReactNode[] = [];
+
+    letters.forEach(({ char, imageIdx, rotation, offsetY, overlap }, index) => {
+      if (char === " ") {
+        if (currentWord.length > 0) {
+          wordElements.push(
+            <div
+              key={`word-${index}`}
+              className="flex flex-nowrap items-start justify-start"
+              style={{
+                marginRight: "24px", // distinct gap between words
+                marginBottom: "12px",
+                display: "flex",
+                flexDirection: "row",
+                flexWrap: "nowrap",
+              }}
+            >
+              {currentWord}
+            </div>
+          );
+          currentWord = [];
+        }
+      } else {
+        const paddedVar = String(imageIdx).padStart(2, "0");
+        const src = `/${char}/${char}_${paddedVar}.png`;
+
+        currentWord.push(
+          <img
+            key={`letter-${index}`}
+            src={src}
+            alt={char}
+            className="h-20 w-auto"
+            style={{
+              transform: `rotate(${rotation}deg)`,
+              marginTop: tight ? "0px" : `${offsetY}px`,
+              marginLeft: currentWord.length === 0 ? 0 : `-${overlap}px`,
+              verticalAlign: "top",
+            }}
+          />
+        );
+      }
+    });
+
+    if (currentWord.length > 0) {
+      wordElements.push(
+        <div
+          key={`word-final`}
+          className="flex flex-nowrap items-start justify-start"
+          style={{
+            margin: tight ? "0 6px 6px 0" : "0 12px 12px 0",
+            maxWidth: "100%",
+          }}
+        >
+          {currentWord}
+        </div>
+      );
+    }
+
+    return wordElements;
   };
 
   return (
@@ -171,87 +229,58 @@ export default function Home() {
 
       <div className="mt-10 flex justify-center">
         <div
-          className="relative bg-zinc-800/50 border border-white/10 shadow-lg p-6 rounded-xl flex justify-center items-start"
+          className="relative bg-zinc-800/50 border border-white/10 shadow-lg p-6 rounded-xl flex justify-center items-center"
           style={{
-            minWidth: "300px",
-            minHeight: "100px",
+            width: "1000px",
+            height: "500px",
             maxWidth: "90vw",
             maxHeight: "80vh",
-            overflowWrap: "break-word",
-            wordBreak: "break-word",
+            overflow: "hidden",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <div
             id="ransom-output"
-            className="flex flex-wrap justify-start items-start gap-y-6 gap-x-4"
+            className="flex flex-wrap justify-center items-start gap-y-6 gap-x-4"
             style={{
               backgroundColor: "transparent",
               maxWidth: "100%",
               alignItems: "flex-start",
             }}
           >
-            {(() => {
-              const wordElements = [];
-              let currentWord: ReactNode[] = [];
+            {renderLetters(false)}
+          </div>
+        </div>
+      </div>
 
-              letters.forEach(
-                ({ char, imageIdx, rotation, offsetY, overlap }, index) => {
-                  if (char === " ") {
-                    if (currentWord.length > 0) {
-                      wordElements.push(
-                        <div
-                          key={`word-${index}`}
-                          className="flex flex-nowrap items-start justify-start"
-                          style={{
-                            margin: "0 12px 12px 0",
-                            maxWidth: "100%",
-                          }}
-                        >
-                          {currentWord}
-                        </div>
-                      );
-                      currentWord = [];
-                    }
-                  } else {
-                    const paddedVar = String(imageIdx).padStart(2, "0");
-                    const src = `/${char}/${char}_${paddedVar}.png`;
-
-                    currentWord.push(
-                      <img
-                        key={`letter-${index}`}
-                        src={src}
-                        alt={char}
-                        className="h-20 w-auto fade-in"
-                        style={{
-                          transform: `rotate(${rotation}deg)`,
-                          marginTop: `${offsetY}px`,
-                          marginLeft:
-                            currentWord.length === 0 ? 0 : `-${overlap}px`,
-                          verticalAlign: "top",
-                        }}
-                      />
-                    );
-                  }
-                }
-              );
-
-              if (currentWord.length > 0) {
-                wordElements.push(
-                  <div
-                    key={`word-final`}
-                    className="flex flex-nowrap items-start justify-start"
-                    style={{
-                      margin: "0 12px 12px 0",
-                      maxWidth: "100%",
-                    }}
-                  >
-                    {currentWord}
-                  </div>
-                );
-              }
-
-              return wordElements;
-            })()}
+      {/* Hidden version for PNG export */}
+      <div
+        id="ransom-download"
+        style={{
+          position: "absolute",
+          top: "-9999px",
+          left: "-9999px",
+        }}
+      >
+        <div
+          style={{
+            width: "1000px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "transparent",
+          }}
+        >
+          <div
+            className="flex flex-wrap justify-center items-center"
+            style={{
+              rowGap: "20px",
+              columnGap: "10px",
+            }}
+          >
+            {renderLetters(true)}
           </div>
         </div>
       </div>
