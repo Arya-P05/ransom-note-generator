@@ -6,6 +6,9 @@ import html2canvas from "html2canvas";
 type Letter = {
   char: string;
   imageIdx: number;
+  rotation: number;
+  offsetY: number;
+  overlap: number;
 };
 
 export default function Home() {
