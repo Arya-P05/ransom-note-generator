@@ -15,6 +15,7 @@ type Letter = {
 export default function Home() {
   const [text, setText] = useState("");
   const [letters, setLetters] = useState<Letter[]>([]);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const VARIATION_COUNTS: { [key: string]: number } = {
     "0": 18,
@@ -92,50 +93,50 @@ export default function Home() {
   };
 
   const handleRemix = () => {
-    const newLetters: Letter[] = letters.map(({ char }) => {
-      if (char === " ")
-        return { char, imageIdx: 0, rotation: 0, offsetY: 0, overlap: 0 };
-      const max = VARIATION_COUNTS[char];
-      return {
-        char,
-        imageIdx: Math.floor(Math.random() * max) + 1,
-        rotation: Math.random() * 16 - 8,
-        offsetY: Math.floor(Math.random() * 4) - 2,
-        overlap: Math.floor(Math.random() * 8) + 4,
-      };
-    });
-    setLetters(newLetters);
+    setLetters(
+      letters.map(({ char }) => {
+        if (char === " ")
+          return { char, imageIdx: 0, rotation: 0, offsetY: 0, overlap: 0 };
+        const max = VARIATION_COUNTS[char];
+        return {
+          char,
+          imageIdx: Math.floor(Math.random() * max) + 1,
+          rotation: Math.random() * 16 - 8,
+          offsetY: Math.floor(Math.random() * 4) - 2,
+          overlap: Math.floor(Math.random() * 8) + 4,
+        };
+      })
+    );
   };
 
   const handleDownload = async () => {
     const element = document.getElementById("ransom-download");
     if (!element) return;
-    const canvas = await html2canvas(element, {
-      backgroundColor: null,
-      scale: 3,
-    });
-    const link = document.createElement("a");
-    link.download = "ransom-note.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
+
+    setIsDownloading(true);
+    try {
+      const canvas = await html2canvas(element, {
+        backgroundColor: null,
+        scale: 3,
+      });
+      const link = document.createElement("a");
+      link.download = "ransom-note.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   const renderLetters = (tight: boolean) => {
     const wordElements: ReactNode[] = [];
     let currentWord: ReactNode[] = [];
 
-    letters.forEach(({ char, imageIdx, rotation, offsetY, overlap }, index) => {
+    letters.forEach(({ char, imageIdx, rotation, offsetY, overlap }, idx) => {
       if (char === " ") {
         if (currentWord.length) {
           wordElements.push(
-            <div
-              key={index}
-              className="flex flex-nowrap items-start"
-              style={{
-                marginRight: tight ? "12px" : "24px",
-                marginBottom: tight ? "8px" : "12px",
-              }}
-            >
+            <div key={idx} className="flex flex-nowrap items-start">
               {currentWord}
             </div>
           );
@@ -146,13 +147,13 @@ export default function Home() {
         const src = `/${char}/${char}_${padded}.png`;
         currentWord.push(
           <img
-            key={index}
+            key={idx}
             src={src}
             alt={char}
             className="h-20 w-auto drop-shadow-lg transition-transform duration-300 hover:scale-105"
             style={{
               transform: `rotate(${rotation}deg)`,
-              marginTop: tight ? "0" : `${offsetY}px`,
+              marginTop: tight ? 0 : `${offsetY}px`,
               marginLeft: currentWord.length === 0 ? 0 : `-${overlap}px`,
             }}
           />
@@ -160,16 +161,10 @@ export default function Home() {
       }
     });
 
+    // final word
     if (currentWord.length) {
       wordElements.push(
-        <div
-          key="final"
-          className="flex flex-nowrap items-start"
-          style={{
-            marginRight: tight ? "12px" : "24px",
-            marginBottom: tight ? "8px" : "12px",
-          }}
-        >
+        <div key="final" className="flex flex-nowrap items-start">
           {currentWord}
         </div>
       );
@@ -180,59 +175,62 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-6 bg-gradient-to-br from-gray-900 via-zinc-900 to-black text-white">
-      {/* Wider card: 90% width maxed at 1000px */}
       <div className="w-[90%] max-w-[1000px] backdrop-blur-sm bg-zinc-800/60 rounded-2xl p-8 shadow-2xl space-y-6">
         <h1 className="text-4xl font-extrabold text-center tracking-tight">
           Ransom Note Generator
         </h1>
+
         <input
           type="text"
           placeholder="Type your message..."
           value={text}
           onChange={(e) => handleChange(e.target.value)}
-          className="w-full px-4 py-3 rounded-lg bg-zinc-700/40 border border-zinc-600 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent text-lg transition"
+          className="w-full px-4 py-3 rounded-lg bg-zinc-700/40 border border-zinc-600 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-400 text-lg transition"
         />
 
         <div className="flex justify-center gap-4">
           <button
             onClick={handleRemix}
-            className="inline-flex items-center space-x-2 px-5 py-2 rounded-lg bg-gradient-to-r from-green-400 to-teal-400 text-black font-semibold shadow-md hover:scale-105 transform transition"
+            className="inline-flex items-center space-x-2 px-5 py-2 rounded-lg bg-gradient-to-r from-green-400 to-teal-400 text-black font-semibold shadow-md hover:scale-105 transition"
           >
             <span>🎲 Remix</span>
           </button>
           <button
             onClick={handleDownload}
-            className="inline-flex items-center space-x-2 px-5 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold shadow-md hover:scale-105 transform transition"
+            disabled={isDownloading}
+            className="inline-flex items-center space-x-2 px-5 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold shadow-md hover:scale-105 transition"
           >
-            <Download className="w-5 h-5" />
-            <span>Download</span>
+            {isDownloading ? (
+              <span>Downloading...</span>
+            ) : (
+              <>
+                <Download className="w-5 h-5" />
+                <span>Download</span>
+              </>
+            )}
           </button>
         </div>
 
         <div className="mt-4 overflow-auto bg-zinc-800/50 rounded-xl border border-zinc-700 w-full h-[400px]">
           <div
             id="ransom-output"
-            className="flex flex-wrap justify-center items-start  gap-y-5 gap-x-3 p-2"
+            className="flex flex-wrap justify-center items-start gap-x-6 gap-y-8 pt-6 pb-4"
           >
             {renderLetters(false)}
           </div>
         </div>
       </div>
 
-      {/* Hidden PNG export */}
       <div id="ransom-download" className="absolute -top-full -left-full">
         <div
           style={{
-            width: "1000px",
+            width: "1100px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
           }}
         >
-          <div
-            className="flex flex-wrap justify-center items-center"
-            style={{ rowGap: "20px", columnGap: "10px" }}
-          >
+          <div className="flex flex-wrap justify-center items-start gap-x-6 gap-y-8 pt-6 pb-4">
             {renderLetters(true)}
           </div>
         </div>
