@@ -185,8 +185,15 @@ export default function Home() {
                     wordElements.push(
                       <div
                         key={`word-${index}`}
-                        className="flex flex-nowrap items-center justify-center px-2"
-                        style={{ margin: "0 6px" }}
+                        className="flex flex-wrap items-center justify-start"
+                        style={{
+                          maxWidth: "100%",
+                          flexShrink: 1,
+                          margin: "0 6px 6px 0", // adds bottom spacing too
+                          flexBasis: "auto",
+                          wordBreak: "break-word",
+                          overflowWrap: "break-word",
+                        }}
                       >
                         {currentWord}
                       </div>
@@ -222,8 +229,15 @@ export default function Home() {
                 wordElements.push(
                   <div
                     key={`word-final`}
-                    className="flex flex-nowrap items-center justify-center px-2"
-                    style={{ margin: "0 6px" }}
+                    className="flex flex-wrap items-center justify-start"
+                    style={{
+                      maxWidth: "100%",
+                      flexShrink: 1,
+                      margin: "0 6px 6px 0",
+                      flexBasis: "auto",
+                      wordBreak: "break-word",
+                      overflowWrap: "break-word",
+                    }}
                   >
                     {currentWord}
                   </div>
