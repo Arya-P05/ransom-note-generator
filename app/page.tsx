@@ -29,7 +29,7 @@ export default function Home() {
     "8": 16,
     "9": 13,
     A: 57,
-    B: 28,
+    B: 29,
     C: 30,
     D: 27,
     E: 33,
@@ -48,12 +48,12 @@ export default function Home() {
     R: 35,
     S: 52,
     T: 26,
-    U: 24,
+    U: 28,
     V: 22,
     W: 24,
-    X: 20,
-    Y: 26,
-    Z: 23,
+    X: 22,
+    Y: 30,
+    Z: 27,
   };
 
   const handleChange = (newText: string) => {
