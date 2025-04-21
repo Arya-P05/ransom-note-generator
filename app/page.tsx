@@ -150,7 +150,7 @@ export default function Home() {
             key={idx}
             src={src}
             alt={char}
-            className="h-20 w-auto drop-shadow-lg transition-transform duration-300 hover:scale-105"
+            className="h-20 w-auto drop-shadow-lg transition-transform duration-300 hover:scale-105 animate-ransom-in"
             style={{
               transform: `rotate(${rotation}deg)`,
               marginTop: tight ? 0 : `${offsetY}px`,
