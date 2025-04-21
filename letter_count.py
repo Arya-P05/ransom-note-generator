@@ -1,7 +1,7 @@
 import os
 
 # Adjust this path to wherever your Next.js public directory is
-PUBLIC_DIR = "./public"
+PUBLIC_DIR = "./public/compressed"
 
 # Only scan folders named A-Z or 0-9
 valid_chars = [chr(c) for c in range(ord("A"), ord("Z")+1)] + [str(i) for i in range(10)]

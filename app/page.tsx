@@ -144,7 +144,7 @@ export default function Home() {
         }
       } else {
         const padded = String(imageIdx).padStart(2, "0");
-        const src = `/${char}/${char}_${padded}.png`;
+        const src = `/compressed/${char}/${char}_${padded}.png`;
         currentWord.push(
           <img
             key={idx}
