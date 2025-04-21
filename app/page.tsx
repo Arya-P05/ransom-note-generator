@@ -156,6 +156,10 @@ export default function Home() {
               marginTop: tight ? 0 : `${offsetY}px`,
               marginLeft: currentWord.length === 0 ? 0 : `-${overlap}px`,
             }}
+            onLoad={(e) => {
+              const img = e.currentTarget;
+              img.style.opacity = "1";
+            }}
           />
         );
       }
